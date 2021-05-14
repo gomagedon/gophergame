@@ -1,40 +1,50 @@
 package engine
 
-// NewEntity ...
-func NewEntity() *Entity {
-	return new(Entity)
-}
+import "github.com/gomagedon/gophergame/engine/canvas"
 
-// Entity ...
 type Entity struct {
 	renderers  []Renderer
 	components []Component
 }
 
-// AddRenderer ...
-func (e *Entity) AddRenderer(renderer Renderer) error {
+func NewEntity() *Entity {
+	return new(Entity)
+}
+
+func (entity *Entity) AddRenderer(renderer Renderer) error {
 	if renderer.Type() == "" {
 		return ErrRendererMustHaveType
 	}
-	if e.isRendererAlreadyAttached(renderer) {
+	if entity.isRendererAlreadyAttached(renderer) {
 		return ErrRendererMustBeUnique
 	}
 
-	e.renderers = append(e.renderers, renderer)
+	entity.renderers = append(entity.renderers, renderer)
 	return nil
 }
 
-// AddComponent ...
-func (e *Entity) AddComponent(component Component) error {
+func (entity *Entity) AddComponent(component Component) error {
 	if component.Type() == "" {
 		return ErrComponentMustHaveType
 	}
-	if e.isComponentAlreadyAttached(component) {
+	if entity.isComponentAlreadyAttached(component) {
 		return ErrComponentMustBeUnique
 	}
 
-	e.components = append(e.components, component)
+	entity.components = append(entity.components, component)
 	return nil
+}
+
+func (entity Entity) Draw(canvas canvas.Canvas) {
+	for _, renderer := range entity.renderers {
+		renderer.OnDraw(canvas)
+	}
+}
+
+func (entity Entity) Update(dt float64) {
+	for _, component := range entity.components {
+		component.OnUpdate(dt)
+	}
 }
 
 func (e Entity) isRendererAlreadyAttached(newRenderer Renderer) bool {
@@ -53,18 +63,4 @@ func (e Entity) isComponentAlreadyAttached(newComponent Component) bool {
 		}
 	}
 	return false
-}
-
-// Draw ...
-func (e Entity) Draw(canvas Canvas) {
-	for _, renderer := range e.renderers {
-		renderer.OnDraw(canvas)
-	}
-}
-
-// Update ...
-func (e Entity) Update(dt float64) {
-	for _, component := range e.components {
-		component.OnUpdate(dt)
-	}
 }
