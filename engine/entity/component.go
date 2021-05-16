@@ -1,4 +1,4 @@
-package engine
+package entity
 
 // Component ...
 type Component interface {

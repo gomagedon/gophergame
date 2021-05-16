@@ -1,11 +1,11 @@
-package engine_test
+package entity_test
 
 import (
 	"testing"
 
 	"github.com/gomagedon/expectate"
-	"github.com/gomagedon/gophergame/engine"
 	"github.com/gomagedon/gophergame/engine/canvas"
+	"github.com/gomagedon/gophergame/engine/entity"
 )
 
 /* Mocks */
@@ -52,42 +52,42 @@ func (mock *MockComponent) OnUpdate(dt float64) {
 func TestEntity_UsesNameFromConstructor(t *testing.T) {
 	expect := expectate.Expect(t)
 
-	entity1 := engine.NewEntity("foo")
+	entity1 := entity.New("foo")
 	expect(entity1.Name()).ToBe("foo")
 
-	entity2 := engine.NewEntity("bar")
+	entity2 := entity.New("bar")
 	expect(entity2.Name()).ToBe("bar")
 }
 
 func TestEntity_AddRenderer_ReturnsErr_WhenRendererHasNoType(t *testing.T) {
 	expect := expectate.Expect(t)
 
-	entity := engine.NewEntity("my entity")
+	myEntity := entity.New("my entity")
 	renderer := &MockRenderer{typeName: ""}
 
-	err := entity.AddRenderer(renderer)
-	expect(err).ToBe(engine.ErrRendererMustHaveType)
+	err := myEntity.AddRenderer(renderer)
+	expect(err).ToBe(entity.ErrRendererMustHaveType)
 }
 
 func TestEntity_AddRenderer_ReturnsErr_WithDuplicateRenderer(t *testing.T) {
 	expect := expectate.Expect(t)
 
-	entity := engine.NewEntity("my entity")
+	myEntity := entity.New("my entity")
 
 	firstRenderer := &MockRenderer{typeName: "foo"}
 	duplicateRenderer := &MockRenderer{typeName: "foo"}
 
-	err := entity.AddRenderer(firstRenderer)
+	err := myEntity.AddRenderer(firstRenderer)
 	expect(err).ToBe(nil)
 
-	err = entity.AddRenderer(duplicateRenderer)
-	expect(err).ToBe(engine.ErrRendererMustBeUnique)
+	err = myEntity.AddRenderer(duplicateRenderer)
+	expect(err).ToBe(entity.ErrRendererMustBeUnique)
 }
 
 func TestEntity_Draw_PassesCanvasToRenderers(t *testing.T) {
 	expect := expectate.Expect(t)
 
-	entity := engine.NewEntity("my entity")
+	myEntity := entity.New("my entity")
 
 	renderers := []*MockRenderer{
 		{typeName: "type1"},
@@ -96,12 +96,12 @@ func TestEntity_Draw_PassesCanvasToRenderers(t *testing.T) {
 	}
 
 	for _, renderer := range renderers {
-		err := entity.AddRenderer(renderer)
+		err := myEntity.AddRenderer(renderer)
 		expect(err).ToBe(nil)
 	}
 
 	canvas := new(MockCanvas)
-	entity.Draw(canvas)
+	myEntity.Draw(canvas)
 
 	for _, renderer := range renderers {
 		expect(renderer.Canvas).ToBe(canvas)
@@ -111,31 +111,31 @@ func TestEntity_Draw_PassesCanvasToRenderers(t *testing.T) {
 func TestEntity_AddComponent_ReturnsErr_WhenComponentHasNoType(t *testing.T) {
 	expect := expectate.Expect(t)
 
-	entity := engine.NewEntity("my entity")
+	myEntity := entity.New("my entity")
 	component := &MockComponent{typeName: ""}
 
-	err := entity.AddComponent(component)
-	expect(err).ToBe(engine.ErrComponentMustHaveType)
+	err := myEntity.AddComponent(component)
+	expect(err).ToBe(entity.ErrComponentMustHaveType)
 }
 
 func TestEntity_AddComponent_ReturnsErr_WithDuplicateComponent(t *testing.T) {
 	expect := expectate.Expect(t)
 
-	entity := engine.NewEntity("my entity")
+	myEntity := entity.New("my entity")
 
 	firstComponent := &MockComponent{typeName: "foo"}
 	duplicateComponent := &MockComponent{typeName: "foo"}
 
-	err := entity.AddComponent(firstComponent)
+	err := myEntity.AddComponent(firstComponent)
 	expect(err).ToBe(nil)
-	err = entity.AddComponent(duplicateComponent)
-	expect(err).ToBe(engine.ErrComponentMustBeUnique)
+	err = myEntity.AddComponent(duplicateComponent)
+	expect(err).ToBe(entity.ErrComponentMustBeUnique)
 }
 
 func TestEntity_Update_PassesDeltaTimeToComponents(t *testing.T) {
 	expect := expectate.Expect(t)
 
-	entity := engine.NewEntity("my entity")
+	entity := entity.New("my entity")
 
 	components := []*MockComponent{
 		{typeName: "type1"},

@@ -1,17 +1,19 @@
-package engine
+package entity
 
-import "github.com/gomagedon/gophergame/engine/canvas"
+import (
+	"github.com/gomagedon/gophergame/engine/canvas"
+)
 
 type Entity struct {
-	children   *EntityCollection
+	children   *Collection
 	components []Component
 	name       string
 	renderers  []Renderer
 }
 
-func NewEntity(name string) *Entity {
+func New(name string) *Entity {
 	return &Entity{
-		children: new(EntityCollection),
+		children: NewCollection(),
 		name:     name,
 	}
 }

@@ -1,16 +1,16 @@
-package engine
+package entity
 
-type EntityCollection struct {
+type Collection struct {
 	children map[string]*Entity
 }
 
-func NewEntityCollection() *EntityCollection {
-	return &EntityCollection{
+func NewCollection() *Collection {
+	return &Collection{
 		children: map[string]*Entity{},
 	}
 }
 
-func (collection *EntityCollection) AddChild(entity *Entity) error {
+func (collection *Collection) AddChild(entity *Entity) error {
 	if collection.hasChild(entity.name) {
 		return ErrDuplicateEntity
 	}
@@ -18,7 +18,7 @@ func (collection *EntityCollection) AddChild(entity *Entity) error {
 	return nil
 }
 
-func (collection EntityCollection) GetChildren() []*Entity {
+func (collection Collection) GetChildren() []*Entity {
 	children := []*Entity{}
 	for _, child := range collection.children {
 		children = append(children, child)
@@ -26,7 +26,7 @@ func (collection EntityCollection) GetChildren() []*Entity {
 	return children
 }
 
-func (collection EntityCollection) GetChild(name string) *Entity {
+func (collection Collection) GetChild(name string) *Entity {
 	child, ok := collection.children[name]
 	if !ok {
 		return nil
@@ -34,7 +34,7 @@ func (collection EntityCollection) GetChild(name string) *Entity {
 	return child
 }
 
-func (collection EntityCollection) RemoveChild(name string) error {
+func (collection Collection) RemoveChild(name string) error {
 	if !collection.hasChild(name) {
 		return ErrNoSuchEntity
 	}
@@ -42,7 +42,7 @@ func (collection EntityCollection) RemoveChild(name string) error {
 	return nil
 }
 
-func (collection EntityCollection) hasChild(name string) bool {
+func (collection Collection) hasChild(name string) bool {
 	_, ok := collection.children[name]
 	return ok
 }

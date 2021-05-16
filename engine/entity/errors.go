@@ -1,8 +1,6 @@
-package engine
+package entity
 
-import (
-	"fmt"
-)
+import "fmt"
 
 var ErrRendererMustHaveType = fmt.Errorf("this renderer does not have a type")
 var ErrRendererMustBeUnique = fmt.Errorf("a Errorfnderer of this type is already attached")
