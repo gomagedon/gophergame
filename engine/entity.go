@@ -3,12 +3,17 @@ package engine
 import "github.com/gomagedon/gophergame/engine/canvas"
 
 type Entity struct {
-	renderers  []Renderer
+	children   *EntityCollection
 	components []Component
+	name       string
+	renderers  []Renderer
 }
 
-func NewEntity() *Entity {
-	return new(Entity)
+func NewEntity(name string) *Entity {
+	return &Entity{
+		children: new(EntityCollection),
+		name:     name,
+	}
 }
 
 func (entity *Entity) AddRenderer(renderer Renderer) error {
@@ -39,6 +44,10 @@ func (entity Entity) Draw(canvas canvas.Canvas) {
 	for _, renderer := range entity.renderers {
 		renderer.OnDraw(canvas)
 	}
+}
+
+func (entity Entity) Name() string {
+	return entity.name
 }
 
 func (entity Entity) Update(dt float64) {
