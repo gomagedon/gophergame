@@ -49,10 +49,20 @@ func (mock *MockComponent) OnUpdate(dt float64) {
 
 /* Tests */
 
+func TestEntity_UsesNameFromConstructor(t *testing.T) {
+	expect := expectate.Expect(t)
+
+	entity1 := engine.NewEntity("foo")
+	expect(entity1.Name()).ToBe("foo")
+
+	entity2 := engine.NewEntity("bar")
+	expect(entity2.Name()).ToBe("bar")
+}
+
 func TestEntity_AddRenderer_ReturnsErr_WhenRendererHasNoType(t *testing.T) {
 	expect := expectate.Expect(t)
 
-	entity := engine.NewEntity()
+	entity := engine.NewEntity("my entity")
 	renderer := &MockRenderer{typeName: ""}
 
 	err := entity.AddRenderer(renderer)
@@ -62,7 +72,7 @@ func TestEntity_AddRenderer_ReturnsErr_WhenRendererHasNoType(t *testing.T) {
 func TestEntity_AddRenderer_ReturnsErr_WithDuplicateRenderer(t *testing.T) {
 	expect := expectate.Expect(t)
 
-	entity := engine.NewEntity()
+	entity := engine.NewEntity("my entity")
 
 	firstRenderer := &MockRenderer{typeName: "foo"}
 	duplicateRenderer := &MockRenderer{typeName: "foo"}
@@ -77,7 +87,7 @@ func TestEntity_AddRenderer_ReturnsErr_WithDuplicateRenderer(t *testing.T) {
 func TestEntity_Draw_PassesCanvasToRenderers(t *testing.T) {
 	expect := expectate.Expect(t)
 
-	entity := engine.NewEntity()
+	entity := engine.NewEntity("my entity")
 
 	renderers := []*MockRenderer{
 		{typeName: "type1"},
@@ -101,7 +111,7 @@ func TestEntity_Draw_PassesCanvasToRenderers(t *testing.T) {
 func TestEntity_AddComponent_ReturnsErr_WhenComponentHasNoType(t *testing.T) {
 	expect := expectate.Expect(t)
 
-	entity := engine.NewEntity()
+	entity := engine.NewEntity("my entity")
 	component := &MockComponent{typeName: ""}
 
 	err := entity.AddComponent(component)
@@ -111,7 +121,7 @@ func TestEntity_AddComponent_ReturnsErr_WhenComponentHasNoType(t *testing.T) {
 func TestEntity_AddComponent_ReturnsErr_WithDuplicateComponent(t *testing.T) {
 	expect := expectate.Expect(t)
 
-	entity := engine.NewEntity()
+	entity := engine.NewEntity("my entity")
 
 	firstComponent := &MockComponent{typeName: "foo"}
 	duplicateComponent := &MockComponent{typeName: "foo"}
@@ -125,7 +135,7 @@ func TestEntity_AddComponent_ReturnsErr_WithDuplicateComponent(t *testing.T) {
 func TestEntity_Update_PassesDeltaTimeToComponents(t *testing.T) {
 	expect := expectate.Expect(t)
 
-	entity := engine.NewEntity()
+	entity := engine.NewEntity("my entity")
 
 	components := []*MockComponent{
 		{typeName: "type1"},
