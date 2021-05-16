@@ -7,7 +7,6 @@ import (
 
 // Game ...
 type Game struct {
-	Canvas   canvas.Canvas
 	Controls controls.Controls
-	Entities EntityCollection
+	Canvas   canvas.Canvas
 }
