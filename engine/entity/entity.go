@@ -1,14 +1,9 @@
 package entity
 
-import (
-	"github.com/gomagedon/gophergame/engine/canvas"
-)
-
 type Entity struct {
 	children   *Collection
 	components []Component
 	name       string
-	renderers  []Renderer
 }
 
 func New(name string) *Entity {
@@ -16,18 +11,6 @@ func New(name string) *Entity {
 		children: NewCollection(),
 		name:     name,
 	}
-}
-
-func (entity *Entity) AddRenderer(renderer Renderer) error {
-	if renderer.Type() == "" {
-		return ErrRendererMustHaveType
-	}
-	if entity.isRendererAlreadyAttached(renderer) {
-		return ErrRendererMustBeUnique
-	}
-
-	entity.renderers = append(entity.renderers, renderer)
-	return nil
 }
 
 func (entity *Entity) AddComponent(component Component) error {
@@ -42,12 +25,6 @@ func (entity *Entity) AddComponent(component Component) error {
 	return nil
 }
 
-func (entity Entity) Draw(canvas canvas.Canvas) {
-	for _, renderer := range entity.renderers {
-		renderer.OnDraw(canvas)
-	}
-}
-
 func (entity Entity) Name() string {
 	return entity.name
 }
@@ -56,15 +33,6 @@ func (entity Entity) Update(dt float64) {
 	for _, component := range entity.components {
 		component.OnUpdate(dt)
 	}
-}
-
-func (e Entity) isRendererAlreadyAttached(newRenderer Renderer) bool {
-	for _, renderer := range e.renderers {
-		if newRenderer.Type() == renderer.Type() {
-			return true
-		}
-	}
-	return false
 }
 
 func (e Entity) isComponentAlreadyAttached(newComponent Component) bool {
