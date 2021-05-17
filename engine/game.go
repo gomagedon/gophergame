@@ -6,7 +6,6 @@ import (
 	"github.com/gomagedon/gophergame/engine/entity"
 )
 
-// Game ...
 type Game struct {
 	Canvas   canvas.Canvas
 	Controls controls.Controls
