@@ -29,9 +29,9 @@ func (entity Entity) Name() string {
 	return entity.name
 }
 
-func (entity Entity) Update(dt float64) {
+func (entity *Entity) Update(dt float64) {
 	for _, component := range entity.components {
-		component.OnUpdate(dt)
+		component.OnUpdate(entity, dt)
 	}
 }
 
