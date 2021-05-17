@@ -17,7 +17,7 @@ func (entity *Entity) AddComponent(component Component) error {
 	if component.Type() == "" {
 		return ErrComponentMustHaveType
 	}
-	if entity.isComponentAlreadyAttached(component) {
+	if entity.hasComponent(component) {
 		return ErrComponentMustBeUnique
 	}
 
@@ -35,7 +35,7 @@ func (entity Entity) Update(dt float64) {
 	}
 }
 
-func (e Entity) isComponentAlreadyAttached(newComponent Component) bool {
+func (e Entity) hasComponent(newComponent Component) bool {
 	for _, component := range e.components {
 		if newComponent.Type() == component.Type() {
 			return true
