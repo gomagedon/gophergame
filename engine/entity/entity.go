@@ -1,62 +1,62 @@
 package entity
 
 type Entity struct {
-	children   *Collection
-	components map[string]Component
-	name       string
+	children  *Collection
+	behaviors map[string]Behavior
+	name      string
 }
 
 func New(name string) *Entity {
 	return &Entity{
-		children:   NewCollection(),
-		components: map[string]Component{},
-		name:       name,
+		children:  NewCollection(),
+		behaviors: map[string]Behavior{},
+		name:      name,
 	}
 }
 
-func (entity *Entity) AddComponent(component Component) error {
-	err := entity.validateNewComponent(component)
+func (entity *Entity) AddBehavior(behavior Behavior) error {
+	err := entity.validateNewBehavior(behavior)
 	if err != nil {
 		return err
 	}
 
-	entity.components[component.Name()] = component
+	entity.behaviors[behavior.Name()] = behavior
 	return nil
 }
 
-func (entity Entity) GetComponent(name string) Component {
-	return entity.components[name]
+func (entity Entity) GetBehavior(name string) Behavior {
+	return entity.behaviors[name]
 }
 
 func (entity Entity) Name() string {
 	return entity.name
 }
 
-func (entity Entity) RemoveComponent(name string) error {
-	if !entity.hasComponent(name) {
-		return ErrComponentDoesNotExist
+func (entity Entity) RemoveBehavior(name string) error {
+	if !entity.hasBehavior(name) {
+		return ErrBehaviorDoesNotExist
 	}
-	delete(entity.components, name)
+	delete(entity.behaviors, name)
 	return nil
 }
 
 func (entity *Entity) Update(dt float64) {
-	for _, component := range entity.components {
-		component.OnUpdate(entity, dt)
+	for _, behavior := range entity.behaviors {
+		behavior.OnUpdate(entity, dt)
 	}
 }
 
-func (entity Entity) hasComponent(name string) bool {
-	_, ok := entity.components[name]
+func (entity Entity) hasBehavior(name string) bool {
+	_, ok := entity.behaviors[name]
 	return ok
 }
 
-func (entity Entity) validateNewComponent(component Component) error {
-	if component.Name() == "" {
-		return ErrComponentMustHaveType
+func (entity Entity) validateNewBehavior(behavior Behavior) error {
+	if behavior.Name() == "" {
+		return ErrBehaviorMustHaveType
 	}
-	if entity.hasComponent(component.Name()) {
-		return ErrComponentMustBeUnique
+	if entity.hasBehavior(behavior.Name()) {
+		return ErrBehaviorMustBeUnique
 	}
 	return nil
 }

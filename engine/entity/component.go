@@ -1,6 +1,6 @@
 package entity
 
-type Component interface {
+type Behavior interface {
 	Name() string
 	OnUpdate(parent *Entity, dt float64)
 }
