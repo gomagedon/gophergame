@@ -12,11 +12,11 @@ type MockComponent struct {
 	Parent    *entity.Entity
 	WasCalled bool
 	DeltaTime float64
-	typeName  string
+	name      string
 }
 
-func (mock MockComponent) Type() string {
-	return mock.typeName
+func (mock MockComponent) Name() string {
+	return mock.name
 }
 
 func (mock *MockComponent) OnUpdate(parent *entity.Entity, dt float64) {
@@ -25,6 +25,7 @@ func (mock *MockComponent) OnUpdate(parent *entity.Entity, dt float64) {
 }
 
 func TestEntity(t *testing.T) {
+	// Test
 	t.Run("Uses name in constructor", func(t *testing.T) {
 		expect := expectate.Expect(t)
 
@@ -35,24 +36,26 @@ func TestEntity(t *testing.T) {
 		expect(entity2.Name()).ToBe("bar")
 	})
 
+	// Test
 	t.Run("AddComponent()", func(t *testing.T) {
 		t.Run("Returns err when component has no type", func(t *testing.T) {
 			expect := expectate.Expect(t)
 
 			myEntity := entity.New("my entity")
-			component := &MockComponent{typeName: ""}
+			component := &MockComponent{name: ""}
 
 			err := myEntity.AddComponent(component)
 			expect(err).ToBe(entity.ErrComponentMustHaveType)
 		})
 
+		// Test
 		t.Run("Returns err with duplicate component", func(t *testing.T) {
 			expect := expectate.Expect(t)
 
 			myEntity := entity.New("my entity")
 
-			firstComponent := &MockComponent{typeName: "foo"}
-			duplicateComponent := &MockComponent{typeName: "foo"}
+			firstComponent := &MockComponent{name: "foo"}
+			duplicateComponent := &MockComponent{name: "foo"}
 
 			err := myEntity.AddComponent(firstComponent)
 			expect(err).ToBe(nil)
@@ -61,6 +64,7 @@ func TestEntity(t *testing.T) {
 		})
 	})
 
+	// Test
 	t.Run("Update()", func(t *testing.T) {
 		var expect expectate.ExpectorFunc
 		var myEntity *entity.Entity
@@ -72,9 +76,9 @@ func TestEntity(t *testing.T) {
 			myEntity = entity.New("my entity")
 
 			components = []*MockComponent{
-				{typeName: "type1"},
-				{typeName: "type2"},
-				{typeName: "type3"},
+				{name: "type1"},
+				{name: "type2"},
+				{name: "type3"},
 			}
 
 			for _, component := range components {
@@ -82,6 +86,7 @@ func TestEntity(t *testing.T) {
 			}
 		}
 
+		// Test
 		t.Run("Passes delta time to components", func(t *testing.T) {
 			setup(t)
 
@@ -96,6 +101,7 @@ func TestEntity(t *testing.T) {
 			}
 		})
 
+		// Test
 		t.Run("Passes parent to components", func(t *testing.T) {
 			setup(t)
 
@@ -104,6 +110,58 @@ func TestEntity(t *testing.T) {
 			for _, component := range components {
 				expect(component.Parent).ToBe(myEntity)
 			}
+		})
+	})
+
+	// Test
+	t.Run("GetComponent()", func(t *testing.T) {
+		var expect expectate.ExpectorFunc
+		var myEntity *entity.Entity
+
+		setup := func(t *testing.T) {
+			expect = expectate.Expect(t)
+			myEntity = entity.New("my entity")
+		}
+
+		// Test
+		t.Run("Returns nil if component does not exist", func(t *testing.T) {
+			setup(t)
+
+			component := myEntity.GetComponent("non-existent")
+			expect(component).ToBe(nil)
+		})
+		// Test
+		t.Run("Returns component if exists", func(t *testing.T) {
+			setup(t)
+
+			fooComponent := &MockComponent{name: "foo"}
+			myEntity.AddComponent(fooComponent)
+
+			component := myEntity.GetComponent("foo")
+			expect(component).ToBe(fooComponent)
+		})
+	})
+
+	t.Run("RemoveComponent()", func(t *testing.T) {
+		t.Run("Returns error if component doesn't exist", func(t *testing.T) {
+			expect := expectate.Expect(t)
+
+			myEntity := entity.New("my entity")
+
+			err := myEntity.RemoveComponent("non-existant")
+
+			expect(err).ToBe(entity.ErrComponentDoesNotExist)
+		})
+
+		t.Run("Removes component if exists", func(t *testing.T) {
+			expect := expectate.Expect(t)
+
+			myEntity := entity.New("my entity")
+			myEntity.AddComponent(&MockComponent{name: "foo"})
+
+			err := myEntity.RemoveComponent("foo")
+			expect(err).ToBe(nil)
+			expect(myEntity.GetComponent("foo")).ToBe(nil)
 		})
 	})
 }
