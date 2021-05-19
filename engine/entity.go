@@ -1,4 +1,4 @@
-package entity
+package engine
 
 type Entity struct {
 	children  *Collection
@@ -6,7 +6,7 @@ type Entity struct {
 	name      string
 }
 
-func New(name string) *Entity {
+func NewEntity(name string) *Entity {
 	return &Entity{
 		children:  NewCollection(),
 		behaviors: map[string]Behavior{},

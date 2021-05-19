@@ -1,4 +1,4 @@
-package entity
+package engine
 
 type Behavior interface {
 	Name() string

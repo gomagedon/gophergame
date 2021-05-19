@@ -1,4 +1,4 @@
-package entity
+package engine
 
 type Collection struct {
 	children map[string]*Entity

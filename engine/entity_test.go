@@ -1,15 +1,15 @@
-package entity_test
+package engine_test
 
 import (
 	"testing"
 
 	"github.com/gomagedon/expectate"
-	"github.com/gomagedon/gophergame/engine/entity"
+	"github.com/gomagedon/gophergame/engine"
 )
 
 // MockBehavior
 type MockBehavior struct {
-	Parent    *entity.Entity
+	Parent    *engine.Entity
 	WasCalled bool
 	DeltaTime float64
 	name      string
@@ -19,7 +19,7 @@ func (mock MockBehavior) Name() string {
 	return mock.name
 }
 
-func (mock *MockBehavior) OnUpdate(parent *entity.Entity, dt float64) {
+func (mock *MockBehavior) OnUpdate(parent *engine.Entity, dt float64) {
 	mock.Parent = parent
 	mock.DeltaTime = dt
 }
@@ -29,10 +29,10 @@ func TestEntity(t *testing.T) {
 	t.Run("Uses name in constructor", func(t *testing.T) {
 		expect := expectate.Expect(t)
 
-		entity1 := entity.New("foo")
+		entity1 := engine.NewEntity("foo")
 		expect(entity1.Name()).ToBe("foo")
 
-		entity2 := entity.New("bar")
+		entity2 := engine.NewEntity("bar")
 		expect(entity2.Name()).ToBe("bar")
 	})
 
@@ -41,18 +41,18 @@ func TestEntity(t *testing.T) {
 		t.Run("Returns err when behavior has no type", func(t *testing.T) {
 			expect := expectate.Expect(t)
 
-			myEntity := entity.New("my entity")
+			myEntity := engine.NewEntity("my entity")
 			behavior := &MockBehavior{name: ""}
 
 			err := myEntity.AddBehavior(behavior)
-			expect(err).ToBe(entity.ErrBehaviorMustHaveType)
+			expect(err).ToBe(engine.ErrBehaviorMustHaveType)
 		})
 
 		// Test
 		t.Run("Returns err with duplicate behavior", func(t *testing.T) {
 			expect := expectate.Expect(t)
 
-			myEntity := entity.New("my entity")
+			myEntity := engine.NewEntity("my entity")
 
 			firstBehavior := &MockBehavior{name: "foo"}
 			duplicateBehavior := &MockBehavior{name: "foo"}
@@ -60,20 +60,20 @@ func TestEntity(t *testing.T) {
 			err := myEntity.AddBehavior(firstBehavior)
 			expect(err).ToBe(nil)
 			err = myEntity.AddBehavior(duplicateBehavior)
-			expect(err).ToBe(entity.ErrBehaviorMustBeUnique)
+			expect(err).ToBe(engine.ErrBehaviorMustBeUnique)
 		})
 	})
 
 	// Test
 	t.Run("Update()", func(t *testing.T) {
 		var expect expectate.ExpectorFunc
-		var myEntity *entity.Entity
+		var myEntity *engine.Entity
 		var behaviors []*MockBehavior
 
 		setup := func(t *testing.T) {
 			expect = expectate.Expect(t)
 
-			myEntity = entity.New("my entity")
+			myEntity = engine.NewEntity("my entity")
 
 			behaviors = []*MockBehavior{
 				{name: "type1"},
@@ -116,11 +116,11 @@ func TestEntity(t *testing.T) {
 	// Test
 	t.Run("GetBehavior()", func(t *testing.T) {
 		var expect expectate.ExpectorFunc
-		var myEntity *entity.Entity
+		var myEntity *engine.Entity
 
 		setup := func(t *testing.T) {
 			expect = expectate.Expect(t)
-			myEntity = entity.New("my entity")
+			myEntity = engine.NewEntity("my entity")
 		}
 
 		// Test
@@ -146,17 +146,17 @@ func TestEntity(t *testing.T) {
 		t.Run("Returns error if behavior doesn't exist", func(t *testing.T) {
 			expect := expectate.Expect(t)
 
-			myEntity := entity.New("my entity")
+			myEntity := engine.NewEntity("my entity")
 
 			err := myEntity.RemoveBehavior("non-existant")
 
-			expect(err).ToBe(entity.ErrBehaviorDoesNotExist)
+			expect(err).ToBe(engine.ErrBehaviorDoesNotExist)
 		})
 
 		t.Run("Removes behavior if exists", func(t *testing.T) {
 			expect := expectate.Expect(t)
 
-			myEntity := entity.New("my entity")
+			myEntity := engine.NewEntity("my entity")
 			myEntity.AddBehavior(&MockBehavior{name: "foo"})
 
 			err := myEntity.RemoveBehavior("foo")
