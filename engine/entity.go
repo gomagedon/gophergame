@@ -1,14 +1,14 @@
 package engine
 
 type Entity struct {
-	children  *Collection
+	Children  *Collection
 	behaviors map[string]Behavior
 	name      string
 }
 
 func NewEntity(name string) *Entity {
 	return &Entity{
-		children:  NewCollection(),
+		Children:  NewCollection(),
 		behaviors: map[string]Behavior{},
 		name:      name,
 	}
