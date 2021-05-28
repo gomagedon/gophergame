@@ -1,26 +1,25 @@
 package engine
 
 type Behavior interface {
-	Name() string
-	OnUpdate(parent *Entity, dt float64)
+	Init(entity *Entity)
+	Update(dt float64)
 }
 
 type behaviorFunc struct {
-	name     string
+	entity   *Entity
 	onUpdate func(parent *Entity, dt float64)
 }
 
-func (b behaviorFunc) Name() string {
-	return b.name
+func (b *behaviorFunc) Init(entity *Entity) {
+	b.entity = entity
 }
 
-func (b behaviorFunc) OnUpdate(parent *Entity, dt float64) {
-	b.onUpdate(parent, dt)
+func (b behaviorFunc) Update(dt float64) {
+	b.onUpdate(b.entity, dt)
 }
 
-func BehaviorFunc(name string, onUpdate func(parent *Entity, dt float64)) Behavior {
+func BehaviorFunc(onUpdate func(entity *Entity, dt float64)) Behavior {
 	return &behaviorFunc{
-		name:     name,
 		onUpdate: onUpdate,
 	}
 }

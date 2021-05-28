@@ -7,24 +7,24 @@ import (
 	"github.com/gomagedon/gophergame/engine"
 )
 
-func TestCollection(t *testing.T) {
+func TestChildren(t *testing.T) {
 	var expect expectate.ExpectorFunc
-	var collection *engine.Collection
+	var children *engine.Children
 
 	setup := func(t *testing.T) {
 		expect = expectate.Expect(t)
-		collection = engine.NewCollection()
+		children = engine.NewChildren()
 	}
 
 	// Test
 	t.Run("Is empty when created", func(t *testing.T) {
 		setup(t)
 
-		expect(len(collection.GetChildren())).ToBe(0)
+		expect(len(children.All())).ToBe(0)
 	})
 
 	// Test
-	t.Run("GetChildren() returns entities added to it", func(t *testing.T) {
+	t.Run("All() returns entities added to it", func(t *testing.T) {
 		type Test struct {
 			name          string
 			entitiesToAdd []*engine.Entity
@@ -50,10 +50,10 @@ func TestCollection(t *testing.T) {
 				setup(t)
 
 				for _, entity := range tc.entitiesToAdd {
-					collection.AddChild(entity)
+					children.Add(entity)
 				}
 
-				children := collection.GetChildren()
+				children := children.All()
 				expect(len(children)).ToBe(len(tc.entitiesToAdd))
 
 				for _, entity := range tc.entitiesToAdd {
@@ -66,82 +66,82 @@ func TestCollection(t *testing.T) {
 	})
 
 	// Test
-	t.Run("GetChildren() is immutable", func(t *testing.T) {
+	t.Run("All() is immutable", func(t *testing.T) {
 		setup(t)
 
-		collection.AddChild(engine.NewEntity("foo"))
-		collection.AddChild(engine.NewEntity("bar"))
-		collection.AddChild(engine.NewEntity("foobar"))
+		children.Add(engine.NewEntity("foo"))
+		children.Add(engine.NewEntity("bar"))
+		children.Add(engine.NewEntity("foobar"))
 
-		children := collection.GetChildren()
-		copyOfChildren := append([]*engine.Entity{}, children...)
+		entities := children.All()
+		copyOfEntities := append([]*engine.Entity{}, entities...)
 
-		children[0] = nil
-		children[1] = engine.NewEntity("random")
+		entities[0] = nil
+		entities[1] = engine.NewEntity("random")
 
-		for _, child := range collection.GetChildren() {
-			expect(includes(copyOfChildren, child)).ToBe(true)
+		for _, entity := range children.All() {
+			expect(includes(copyOfEntities, entity)).ToBe(true)
 		}
 	})
 
 	// Test
-	t.Run("AddChild() returns error when same entity is added twice", func(t *testing.T) {
+	t.Run("Add() returns error when same entity is added twice", func(t *testing.T) {
 		setup(t)
 
 		myEntity := engine.NewEntity("my entity")
 
-		err := collection.AddChild(myEntity)
+		err := children.Add(myEntity)
 		expect(err).ToBe(nil)
-		err = collection.AddChild(myEntity)
+		err = children.Add(myEntity)
 		expect(err).ToBe(engine.ErrDuplicateEntity)
 	})
 
 	// Test
-	t.Run("GetChild() returns nil if child does not exist", func(t *testing.T) {
+	t.Run("Get() returns nil if child does not exist", func(t *testing.T) {
 		setup(t)
 
-		child := collection.GetChild("non-existent")
+		child := children.Get("non-existent")
 		if child != nil {
 			t.Fatalf("Expected child to be nil; Got: %v", child)
 		}
 	})
 
 	// Test
-	t.Run("GetChild() returns added child with name", func(t *testing.T) {
+	t.Run("Get() returns added child with name", func(t *testing.T) {
 		setup(t)
 
 		fooEntity := engine.NewEntity("foo")
 		barEntity := engine.NewEntity("bar")
 		foobarEntity := engine.NewEntity("foobar")
 
-		collection.AddChild(fooEntity)
-		collection.AddChild(barEntity)
-		collection.AddChild(foobarEntity)
+		children.Add(fooEntity)
+		children.Add(barEntity)
+		children.Add(foobarEntity)
 
-		expect(collection.GetChild("foo")).ToBe(fooEntity)
-		expect(collection.GetChild("bar")).ToBe(barEntity)
-		expect(collection.GetChild("foobar")).ToBe(foobarEntity)
+		expect(children.Get("foo")).ToBe(fooEntity)
+		expect(children.Get("bar")).ToBe(barEntity)
+		expect(children.Get("foobar")).ToBe(foobarEntity)
 	})
 
 	// Test
-	t.Run("RemoveChild() returns error if child does not exist", func(t *testing.T) {
+	t.Run("Remove() returns error if child does not exist", func(t *testing.T) {
 		setup(t)
 
-		err := collection.RemoveChild("non-existent")
+		err := children.Remove("non-existent")
 		expect(err).ToBe(engine.ErrNoSuchEntity)
 	})
 
 	// Test
-	t.Run("RemoveChild() removes child from collection", func(t *testing.T) {
+	t.Run("Remove() removes child from children", func(t *testing.T) {
 		setup(t)
 
 		myEntity := engine.NewEntity("my entity")
-		collection.AddChild(myEntity)
-		expect(collection.GetChild("my entity")).ToBe(myEntity)
+		children.Add(myEntity)
+		expect(children.Get("my entity")).ToBe(myEntity)
 
-		err := collection.RemoveChild("my entity")
+		err := children.Remove("my entity")
 		expect(err).ToBe(nil)
-		if collection.GetChild("my entity") != nil {
+		if children.Get("my entity") != nil {
 			t.Fatalf("Child was not removed")
 		}
 	})

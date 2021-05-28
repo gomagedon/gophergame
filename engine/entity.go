@@ -1,31 +1,37 @@
 package engine
 
 type Entity struct {
-	Children  *Collection
+	children  *Children
 	behaviors map[string]Behavior
 	name      string
 }
 
 func NewEntity(name string) *Entity {
 	return &Entity{
-		Children:  NewCollection(),
+		children:  NewChildren(),
 		behaviors: map[string]Behavior{},
 		name:      name,
 	}
 }
 
-func (entity *Entity) AddBehavior(behavior Behavior) error {
-	err := entity.validateNewBehavior(behavior)
+func (entity *Entity) AddBehavior(name string, behavior Behavior) error {
+	err := entity.validateBehaviorName(name)
 	if err != nil {
 		return err
 	}
 
-	entity.behaviors[behavior.Name()] = behavior
+	entity.behaviors[name] = behavior
+	behavior.Init(entity)
+
 	return nil
 }
 
 func (entity Entity) GetBehavior(name string) Behavior {
 	return entity.behaviors[name]
+}
+
+func (entity Entity) Children() *Children {
+	return entity.children
 }
 
 func (entity Entity) Name() string {
@@ -42,7 +48,7 @@ func (entity Entity) RemoveBehavior(name string) error {
 
 func (entity *Entity) Update(dt float64) {
 	for _, behavior := range entity.behaviors {
-		behavior.OnUpdate(entity, dt)
+		behavior.Update(dt)
 	}
 }
 
@@ -51,12 +57,12 @@ func (entity Entity) hasBehavior(name string) bool {
 	return ok
 }
 
-func (entity Entity) validateNewBehavior(behavior Behavior) error {
-	if behavior.Name() == "" {
-		return ErrBehaviorMustHaveType
+func (entity Entity) validateBehaviorName(name string) error {
+	if name == "" {
+		return ErrBehaviorMustHaveName
 	}
-	if entity.hasBehavior(behavior.Name()) {
-		return ErrBehaviorMustBeUnique
+	if entity.hasBehavior(name) {
+		return ErrBehaviorMustHaveUniqueName
 	}
 	return nil
 }
