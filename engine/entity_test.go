@@ -71,17 +71,14 @@ func TestEntity(t *testing.T) {
 
 		myEntity := engine.NewEntity("my entity")
 
-		behaviors := []*MockBehavior{}
-		for i := 0; i < 10; i++ {
-			myEntity.AddBehavior(fmt.Sprint("behavior", i), new(MockBehavior))
-		}
+		behaviors := addMockBehaviors(myEntity, 10)
 
-		myEntity.Update(123.0) // arbitrary number
+		myEntity.Update(3.14159)
 		for _, behavior := range behaviors {
-			expect(behavior.DeltaTime).ToBe(123.0)
+			expect(behavior.DeltaTime).ToBe(3.14159)
 		}
 
-		myEntity.Update(99.0) // another arbitrary number
+		myEntity.Update(99.0)
 		for _, behavior := range behaviors {
 			expect(behavior.DeltaTime).ToBe(99.0)
 		}
@@ -153,4 +150,39 @@ func TestEntity(t *testing.T) {
 			expect(behavior.DeltaTime).ToBe(0.0) // behavior was not updated
 		})
 	})
+
+	// Test
+	t.Run("Has a transform", func(t *testing.T) {
+		// Test
+		t.Run("That is not nil", func(t *testing.T) {
+			setup(t)
+
+			myEntity := engine.NewEntity("my entity")
+
+			expect(myEntity.Transform()).NotToBe(nil)
+		})
+
+		// Test
+		t.Run("With expected default values", func(t *testing.T) {
+			setup(t)
+
+			myEntity := engine.NewEntity("my entity")
+
+			expect(myEntity.Transform().GetBox()).ToEqual(engine.Box{
+				X: 1,
+				Y: 1,
+				W: 1,
+				H: 1,
+			})
+		})
+	})
+}
+
+func addMockBehaviors(entity *engine.Entity, count int) []*MockBehavior {
+	behaviors := []*MockBehavior{}
+	for i := 0; i < count; i++ {
+		behaviors = append(behaviors, new(MockBehavior))
+		entity.AddBehavior(fmt.Sprint("behavior", i), behaviors[i])
+	}
+	return behaviors
 }

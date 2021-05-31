@@ -1,12 +1,19 @@
 package engine
 
 type Entity struct {
-	children  *Children
 	behaviors map[string]Behavior
+	children  *Children
+	transform *Transform
 	name      string
 }
 
 func NewEntity(name string) *Entity {
+	entity := buildEntity(name)
+	entity.addTransform()
+	return entity
+}
+
+func buildEntity(name string) *Entity {
 	return &Entity{
 		children:  NewChildren(),
 		behaviors: map[string]Behavior{},
@@ -14,9 +21,13 @@ func NewEntity(name string) *Entity {
 	}
 }
 
+func (entity *Entity) addTransform() {
+	entity.transform = NewTransform(1, 1, 1, 1)
+	entity.AddBehavior("transform", entity.transform)
+}
+
 func (entity *Entity) AddBehavior(name string, behavior Behavior) error {
-	err := entity.validateBehaviorName(name)
-	if err != nil {
+	if err := entity.validateBehaviorName(name); err != nil {
 		return err
 	}
 
@@ -28,6 +39,10 @@ func (entity *Entity) AddBehavior(name string, behavior Behavior) error {
 
 func (entity Entity) GetBehavior(name string) Behavior {
 	return entity.behaviors[name]
+}
+
+func (entity Entity) Transform() *Transform {
+	return entity.transform
 }
 
 func (entity Entity) Children() *Children {

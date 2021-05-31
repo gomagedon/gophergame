@@ -5,6 +5,8 @@ type Behavior interface {
 	Update(dt float64)
 }
 
+/* behaviorFunc */
+
 type behaviorFunc struct {
 	entity   *Entity
 	onUpdate func(parent *Entity, dt float64)
