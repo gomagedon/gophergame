@@ -77,7 +77,7 @@ func (entity Entity) validateBehaviorName(name string) error {
 		return ErrBehaviorMustHaveName
 	}
 	if entity.hasBehavior(name) {
-		return ErrBehaviorMustHaveUniqueName
+		return ErrBehaviorIsNotUnique
 	}
 	return nil
 }

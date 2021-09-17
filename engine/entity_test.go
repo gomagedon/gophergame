@@ -50,7 +50,7 @@ func TestEntity(t *testing.T) {
 
 			myEntity.AddBehavior("foo", new(MockBehavior))
 			err := myEntity.AddBehavior("foo", new(MockBehavior))
-			expect(err).ToBe(engine.ErrBehaviorMustHaveUniqueName)
+			expect(err).ToBe(engine.ErrBehaviorIsNotUnique)
 		})
 
 		// Test
