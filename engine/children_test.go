@@ -8,7 +8,7 @@ import (
 )
 
 func TestChildren(t *testing.T) {
-	var expect expectate.ExpectorFunc
+	var expect expectate.ExpectorFunc // testing utility
 	var children *engine.Children
 
 	setup := func(t *testing.T) {

@@ -8,7 +8,7 @@ import (
 )
 
 func TestTransform(t *testing.T) {
-	var expect expectate.ExpectorFunc
+	var expect expectate.ExpectorFunc // testing utility
 
 	setup := func(t *testing.T) {
 		expect = expectate.Expect(t)

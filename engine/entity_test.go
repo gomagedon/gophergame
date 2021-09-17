@@ -23,7 +23,7 @@ func (mock *MockBehavior) Update(dt float64) {
 }
 
 func TestEntity(t *testing.T) {
-	var expect expectate.ExpectorFunc
+	var expect expectate.ExpectorFunc // testing utility
 
 	setup := func(t *testing.T) {
 		expect = expectate.Expect(t)
@@ -54,7 +54,7 @@ func TestEntity(t *testing.T) {
 		})
 
 		// Test
-		t.Run("Inits behavior if InitBehavior", func(t *testing.T) {
+		t.Run("Inits behavior", func(t *testing.T) {
 			setup(t)
 
 			myEntity := engine.NewEntity("my entity")
@@ -70,7 +70,6 @@ func TestEntity(t *testing.T) {
 		setup(t)
 
 		myEntity := engine.NewEntity("my entity")
-
 		behaviors := addMockBehaviors(myEntity, 10)
 
 		myEntity.Update(3.14159)
