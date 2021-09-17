@@ -6,28 +6,28 @@ import (
 	"github.com/veandco/go-sdl2/sdl"
 )
 
-type SDLFactory struct {
+type SDL struct {
 	cleanupCanvas func()
 }
 
-func NewSDLFactory() *SDLFactory {
+func NewSDL() *SDL {
 	if err := sdl.Init(sdl.INIT_EVERYTHING); err != nil {
 		panic(err)
 	}
-	return new(SDLFactory)
+	return new(SDL)
 }
 
-func (fac *SDLFactory) GenerateCanvas(width int, height int) canvas.Canvas {
+func (fac *SDL) GenerateCanvas(width int, height int) canvas.Canvas {
 	canvas, cleanup := canvas.NewSDLCanvas(width, height)
 	fac.cleanupCanvas = cleanup
 	return canvas
 }
 
-func (fac SDLFactory) GenerateControls() *controls.SDLKeyboardControls {
+func (fac SDL) GenerateControls() *controls.SDLKeyboardControls {
 	return controls.NewSDLKeyboardControls()
 }
 
-func (fac SDLFactory) Cleanup() {
+func (fac SDL) Cleanup() {
 	sdl.Quit()
 	fac.cleanupCanvas()
 }

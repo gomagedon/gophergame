@@ -1,4 +1,4 @@
-package engine
+package core
 
 type Entity struct {
 	behaviors map[string]Behavior

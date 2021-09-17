@@ -1,19 +1,19 @@
-package engine_test
+package core_test
 
 import (
 	"testing"
 
 	"github.com/gomagedon/expectate"
-	"github.com/gomagedon/gophergame/engine"
+	"github.com/gomagedon/gophergame/core"
 )
 
 func TestChildren(t *testing.T) {
 	var expect expectate.ExpectorFunc // testing utility
-	var children *engine.Children
+	var children *core.Children
 
 	setup := func(t *testing.T) {
 		expect = expectate.Expect(t)
-		children = engine.NewChildren()
+		children = core.NewChildren()
 	}
 
 	// Test
@@ -27,19 +27,19 @@ func TestChildren(t *testing.T) {
 	t.Run("All() returns entities added to it", func(t *testing.T) {
 		type Test struct {
 			name          string
-			entitiesToAdd []*engine.Entity
+			entitiesToAdd []*core.Entity
 		}
 
 		tests := []Test{
 			{
 				name:          "one entity",
-				entitiesToAdd: []*engine.Entity{engine.NewEntity("foo")},
+				entitiesToAdd: []*core.Entity{core.NewEntity("foo")},
 			},
 			{
 				name: "two entities",
-				entitiesToAdd: []*engine.Entity{
-					engine.NewEntity("foo"),
-					engine.NewEntity("bar"),
+				entitiesToAdd: []*core.Entity{
+					core.NewEntity("foo"),
+					core.NewEntity("bar"),
 				},
 			},
 		}
@@ -69,15 +69,15 @@ func TestChildren(t *testing.T) {
 	t.Run("All() is immutable", func(t *testing.T) {
 		setup(t)
 
-		children.Add(engine.NewEntity("foo"))
-		children.Add(engine.NewEntity("bar"))
-		children.Add(engine.NewEntity("foobar"))
+		children.Add(core.NewEntity("foo"))
+		children.Add(core.NewEntity("bar"))
+		children.Add(core.NewEntity("foobar"))
 
 		entities := children.All()
-		copyOfEntities := append([]*engine.Entity{}, entities...)
+		copyOfEntities := append([]*core.Entity{}, entities...)
 
 		entities[0] = nil
-		entities[1] = engine.NewEntity("random")
+		entities[1] = core.NewEntity("random")
 
 		for _, entity := range children.All() {
 			expect(includes(copyOfEntities, entity)).ToBe(true)
@@ -88,12 +88,12 @@ func TestChildren(t *testing.T) {
 	t.Run("Add() returns error when same entity is added twice", func(t *testing.T) {
 		setup(t)
 
-		myEntity := engine.NewEntity("my entity")
+		myEntity := core.NewEntity("my entity")
 
 		err := children.Add(myEntity)
 		expect(err).ToBe(nil)
 		err = children.Add(myEntity)
-		expect(err).ToBe(engine.ErrDuplicateEntity)
+		expect(err).ToBe(core.ErrDuplicateEntity)
 	})
 
 	// Test
@@ -110,9 +110,9 @@ func TestChildren(t *testing.T) {
 	t.Run("Get() returns added child with name", func(t *testing.T) {
 		setup(t)
 
-		fooEntity := engine.NewEntity("foo")
-		barEntity := engine.NewEntity("bar")
-		foobarEntity := engine.NewEntity("foobar")
+		fooEntity := core.NewEntity("foo")
+		barEntity := core.NewEntity("bar")
+		foobarEntity := core.NewEntity("foobar")
 
 		children.Add(fooEntity)
 		children.Add(barEntity)
@@ -128,14 +128,14 @@ func TestChildren(t *testing.T) {
 		setup(t)
 
 		err := children.Remove("non-existent")
-		expect(err).ToBe(engine.ErrNoSuchEntity)
+		expect(err).ToBe(core.ErrNoSuchEntity)
 	})
 
 	// Test
 	t.Run("Remove() removes child from children", func(t *testing.T) {
 		setup(t)
 
-		myEntity := engine.NewEntity("my entity")
+		myEntity := core.NewEntity("my entity")
 		children.Add(myEntity)
 		expect(children.Get("my entity")).ToBe(myEntity)
 
@@ -147,7 +147,7 @@ func TestChildren(t *testing.T) {
 	})
 }
 
-func includes(arr []*engine.Entity, entity *engine.Entity) bool {
+func includes(arr []*core.Entity, entity *core.Entity) bool {
 	for _, element := range arr {
 		if element == entity {
 			return true

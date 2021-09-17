@@ -1,20 +1,20 @@
-package engine_test
+package core_test
 
 import (
 	"fmt"
 	"testing"
 
 	"github.com/gomagedon/expectate"
-	"github.com/gomagedon/gophergame/engine"
+	"github.com/gomagedon/gophergame/core"
 )
 
 // MockBehavior
 type MockBehavior struct {
-	Parent    *engine.Entity
+	Parent    *core.Entity
 	DeltaTime float64
 }
 
-func (mock *MockBehavior) Init(parent *engine.Entity) {
+func (mock *MockBehavior) Init(parent *core.Entity) {
 	mock.Parent = parent
 }
 
@@ -33,10 +33,10 @@ func TestEntity(t *testing.T) {
 	t.Run("Uses name in constructor", func(t *testing.T) {
 		setup(t)
 
-		entity1 := engine.NewEntity("foo")
+		entity1 := core.NewEntity("foo")
 		expect(entity1.Name()).ToBe("foo")
 
-		entity2 := engine.NewEntity("bar")
+		entity2 := core.NewEntity("bar")
 		expect(entity2.Name()).ToBe("bar")
 	})
 
@@ -46,18 +46,18 @@ func TestEntity(t *testing.T) {
 		t.Run("Returns err with duplicate behavior", func(t *testing.T) {
 			setup(t)
 
-			myEntity := engine.NewEntity("my entity")
+			myEntity := core.NewEntity("my entity")
 
 			myEntity.AddBehavior("foo", new(MockBehavior))
 			err := myEntity.AddBehavior("foo", new(MockBehavior))
-			expect(err).ToBe(engine.ErrBehaviorIsNotUnique)
+			expect(err).ToBe(core.ErrBehaviorIsNotUnique)
 		})
 
 		// Test
 		t.Run("Inits behavior", func(t *testing.T) {
 			setup(t)
 
-			myEntity := engine.NewEntity("my entity")
+			myEntity := core.NewEntity("my entity")
 			behavior := new(MockBehavior)
 			myEntity.AddBehavior("mock behavior", behavior)
 
@@ -69,7 +69,7 @@ func TestEntity(t *testing.T) {
 	t.Run("Update() passes delta time to behaviors", func(t *testing.T) {
 		setup(t)
 
-		myEntity := engine.NewEntity("my entity")
+		myEntity := core.NewEntity("my entity")
 		behaviors := addMockBehaviors(myEntity, 10)
 
 		myEntity.Update(3.14159)
@@ -86,11 +86,11 @@ func TestEntity(t *testing.T) {
 	// Test
 	t.Run("GetBehavior()", func(t *testing.T) {
 		var expect expectate.ExpectorFunc
-		var myEntity *engine.Entity
+		var myEntity *core.Entity
 
 		setup := func(t *testing.T) {
 			expect = expectate.Expect(t)
-			myEntity = engine.NewEntity("my entity")
+			myEntity = core.NewEntity("my entity")
 		}
 
 		// Test
@@ -117,17 +117,17 @@ func TestEntity(t *testing.T) {
 		t.Run("Returns error if behavior doesn't exist", func(t *testing.T) {
 			setup(t)
 
-			myEntity := engine.NewEntity("my entity")
+			myEntity := core.NewEntity("my entity")
 
 			err := myEntity.RemoveBehavior("non-existant")
-			expect(err).ToBe(engine.ErrBehaviorDoesNotExist)
+			expect(err).ToBe(core.ErrBehaviorDoesNotExist)
 		})
 
 		// Test
 		t.Run("Removes behavior if exists", func(t *testing.T) {
 			setup(t)
 
-			myEntity := engine.NewEntity("my entity")
+			myEntity := core.NewEntity("my entity")
 			myEntity.AddBehavior("foo", new(MockBehavior))
 
 			myEntity.RemoveBehavior("foo")
@@ -138,7 +138,7 @@ func TestEntity(t *testing.T) {
 		t.Run("Removed behavior is not updated", func(t *testing.T) {
 			setup(t)
 
-			myEntity := engine.NewEntity("my entity")
+			myEntity := core.NewEntity("my entity")
 			behavior := new(MockBehavior)
 			myEntity.AddBehavior("foo", behavior)
 
@@ -156,7 +156,7 @@ func TestEntity(t *testing.T) {
 		t.Run("That is not nil", func(t *testing.T) {
 			setup(t)
 
-			myEntity := engine.NewEntity("my entity")
+			myEntity := core.NewEntity("my entity")
 
 			expect(myEntity.Transform()).NotToBe(nil)
 		})
@@ -165,9 +165,9 @@ func TestEntity(t *testing.T) {
 		t.Run("With expected default values", func(t *testing.T) {
 			setup(t)
 
-			myEntity := engine.NewEntity("my entity")
+			myEntity := core.NewEntity("my entity")
 
-			expect(myEntity.Transform().GetBox()).ToEqual(engine.Box{
+			expect(myEntity.Transform().GetBox()).ToEqual(core.Box{
 				X: 1,
 				Y: 1,
 				W: 1,
@@ -177,7 +177,7 @@ func TestEntity(t *testing.T) {
 	})
 }
 
-func addMockBehaviors(entity *engine.Entity, count int) []*MockBehavior {
+func addMockBehaviors(entity *core.Entity, count int) []*MockBehavior {
 	behaviors := []*MockBehavior{}
 	for i := 0; i < count; i++ {
 		behaviors = append(behaviors, new(MockBehavior))

@@ -1,4 +1,4 @@
-package engine
+package core
 
 type Vector struct {
 	X float64

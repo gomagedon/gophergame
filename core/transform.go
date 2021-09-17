@@ -1,4 +1,4 @@
-package engine
+package core
 
 type Transform struct {
 	x float64

@@ -1,4 +1,4 @@
-package engine
+package core
 
 type Children struct {
 	entities map[string]*Entity
