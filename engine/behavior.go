@@ -1,4 +1,4 @@
-package core
+package engine
 
 type Behavior interface {
 	Init(entity *Entity)
